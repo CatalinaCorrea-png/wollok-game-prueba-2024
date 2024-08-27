@@ -1,0 +1,42 @@
+import wollok.game.*
+
+import personaje.pepita
+import mapa.plataforma
+
+program PepitaGame {
+  game.cellSize(1)
+	game.title("Pepita")
+	game.height(720)
+	game.width(1280)
+
+	// add assets in asset folder, for example, for the background
+  game.boardGround("fondo2.jpg")
+  // game.ground("./assets/fondo2.jpg")
+	game.showAttributes(pepita) //Debug
+
+  plataforma.posicionar(100, 0)
+  game.addVisual(plataforma)
+
+  game.addVisual(pepita)
+  game.say(pepita, plataforma.posX().toString())
+  keyboard.i().onPressDo { game.say(pepita, "hola!") }
+
+  if (!(pepita.position()==plataforma.position())) {
+    keyboard.right().onPressDo{ pepita.derecha(10) }
+    keyboard.left().onPressDo{ pepita.izquierda(10) }
+    keyboard.up().onPressDo{ pepita.salto() }
+    pepita.actualizarSalto()
+  } else {
+    keyboard.right().onPressDo{ pepita.derecha(0) }
+  }
+
+
+  // game.whenCollideDo(pepita, { elemento => 
+  //   elemento.posicionar(10, 0)
+  //   elemento.play()
+  //   game.say(pepita, elemento.posX().toString())
+  // })
+
+
+	game.start()
+}
