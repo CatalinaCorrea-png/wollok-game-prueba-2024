@@ -1,8 +1,11 @@
 import wollok.game.*
 import mapa.constants
-object pepita {
+object player {
   var energy = 100
+  const width = 40
+  const height = 28
   var property position = game.origin()
+  var xSpeed = 10
 
 	var airSpeed = 0.0;
 	const gravity = 0.04 * constants.getGAMESCALE();
@@ -12,28 +15,33 @@ object pepita {
 
 
   method energy() = energy
-  method posX() = position.x()
-  method posY() = position.y()
+  method xPos() = position.x()
+  method yPos() = position.y()
   method getPosition() = position
-
-  method fly(minutes) {
-    energy = energy - minutes * 3
-  }
+  method width() = width
+  method height() = height
 
   method golpe() = "auch!"
-
+  method noPasa() = "No puedo pasar!"
   method image() = "player_1.png"
 
   method centrar() {
-    position = game.center()
+    position = position.up(game.height()/2 - height/2 ).right(game.width()/2 - width/2) 
+  } 
+  method xSpeed() = xSpeed
+  method xSpeed(c) {
+    xSpeed = c
   }
-
-  method derecha(c) {
-    position = position.right(c)
+  method derecha() {
+    position = position.right(xSpeed)
   }
-  method izquierda(c) {
-    position = position.left(c)
+  method izquierda() {
+    position = position.left(xSpeed)
   }
+  method up() {
+    position = position.up(xSpeed)
+  }
+  //-----------------------------
   method salto() {
     if(inAir) {
 			inAir = true;
@@ -41,7 +49,6 @@ object pepita {
       inAir = true;
       airSpeed = jumpSpeed;      
     }
-
 	}
   method resetInAir() {
 		inAir = false;
@@ -51,7 +58,7 @@ object pepita {
     if(inAir) {
       position = position.up(airSpeed)
       airSpeed += gravity // if its up, grav is lower num, so speed is slower and vice versa.
-      self.derecha(10)
+      self.derecha()
     } else {
       if(airSpeed > 0){
 					self.resetInAir()
@@ -59,9 +66,15 @@ object pepita {
         airSpeed = fallSpeedAfterCollision
       }
     }
-
   }
+//-----------------------------------------
 
+  method canMoveHereX(x) {
+    return (game.getObjectsIn(x).size() == 0)
+  }
+  method canMoveHereY(y, plataforma) {
+    return !(y == plataforma)
+  }
   // method updateXPos() {
     
   // }
@@ -74,4 +87,31 @@ object pepita {
     game.sound("fart-with-extra-reverb.mp3")
   }
 
+}
+
+
+//-- CLASE PARA HACER HITBOXES
+class Hitbox {
+  const width
+  const height
+  // const property objeto
+  var property position = game.origin()
+
+  method xPos() = position.x()
+  method yPos() = position.y()
+  method getPosition() = position
+
+  method xHitbox(x) = x + width
+  method yHitbox(y) = y
+
+  method updatexPos(x) {
+    position = position.right(x)
+  }
+  method updateyPos(y) {
+    position = position.up(y)
+  }
+
+  method initHitbox(objeto) {
+    position = position.createPosition(self.xHitbox(objeto.xPos()), self.yHitbox(objeto.yPos()))
+  }
 }

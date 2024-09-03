@@ -1,7 +1,7 @@
 import wollok.game.*
 
-import personaje.pepita
-import mapa.plataforma
+import personaje.*
+import mapa.*
 
 program PepitaGame {
   game.cellSize(1)
@@ -9,34 +9,64 @@ program PepitaGame {
 	game.height(720)
 	game.width(1280)
 
-	// add assets in asset folder, for example, for the background
   game.boardGround("fondo2.jpg")
-  // game.ground("./assets/fondo2.jpg")
-	game.showAttributes(pepita) //Debug
+	game.showAttributes(player) //Debug
 
-  plataforma.posicionar(100, 0)
-  game.addVisual(plataforma)
+  // AGREGO PLATAFORMA
+  platGrande.posicionar(100, 0)
+  game.addVisual(platGrande)
+  const platHitbox = new Hitbox(width = 96, height = 96)
+  platHitbox.initHitbox(platGrande)
 
-  game.addVisual(pepita)
-  game.say(pepita, plataforma.posX().toString())
-  keyboard.i().onPressDo { game.say(pepita, "hola!") }
+  // AGREGO JUGADOR
+  game.addVisual(player)
+  // HITBOX DEL PLAYER
+  const playerHitbox = new Hitbox(width = 40, height = 28)
+  playerHitbox.initHitbox(player)
 
-  if (!(pepita.position()==plataforma.position())) {
-    keyboard.right().onPressDo{ pepita.derecha(10) }
-    keyboard.left().onPressDo{ pepita.izquierda(10) }
-    keyboard.up().onPressDo{ pepita.salto() }
-    pepita.actualizarSalto()
-  } else {
-    keyboard.right().onPressDo{ pepita.derecha(0) }
+  game.say(player, platGrande.xPos().toString())
+  keyboard.d().onPressDo { game.say(player, playerHitbox.xPos().toString()) }
+  keyboard.w().onPressDo { game.say(platGrande, platGrande.xPos().toString()) }
+
+
+
+
+  keyboard.right().onPressDo { 
+    
+    if(player.canMoveHereX( playerHitbox.getPosition()) ) {
+      player.derecha() 
+      playerHitbox.updatexPos(player.xSpeed()) 
+    } else {
+      game.say(player, game.getObjectsIn(playerHitbox.getPosition()).toString())
+    }
+
   }
 
+  keyboard.left().onPressDo { 
+    if(player.canMoveHereX(playerHitbox.getPosition() )) {
+      player.izquierda() 
+      playerHitbox.updatexPos(player.xSpeed()) 
+    } else {
+      game.say(player, player.noPasa())
+    }
+  }
+  
+  keyboard.up().onPressDo { 
+    player.up()
+    player.salto() 
+    playerHitbox.updateyPos(player.xSpeed()) 
+    }
 
-  // game.whenCollideDo(pepita, { elemento => 
-  //   elemento.posicionar(10, 0)
-  //   elemento.play()
-  //   game.say(pepita, elemento.posX().toString())
-  // })
 
 
-	game.start()
+//-- GAME OVER TOCANDO NUMERO 0:
+  keyboard.num0().onPressDo { 
+    gameOverText.centrar()
+    game.addVisual(gameOverBg)
+    game.addVisual(gameOverText)
+    game.stop() 
+    }
+
+
+  game.start()
 }
