@@ -1,5 +1,26 @@
 import wollok.game.*
 
+const mapaPosiciones = [100,200,300,400]
+
+object mapa {
+  const property plataformas = []
+  const property platHitbox = []
+  var property cantidad = 0
+
+  method addPlataforma(plataforma) {
+    plataformas.add(plataforma)
+    self.cantidad(1)
+  }
+  method platHitbox(plataforma) {
+    platHitbox.add(plataforma)
+    // self.cantidad(1)
+  }
+
+  method cantidad(n) {
+    cantidad += n
+  }
+}
+
 
 //-- CLASE PARA CREAR PLATAFORMAS
 class Plataforma {
@@ -20,12 +41,9 @@ class Plataforma {
   method width() = width
   method height() = height
 
-  method play() {
-    game.sound("fart-with-reverb.mp3")
-  }
-}
 
-const platGrande = new Plataforma(imagen = "plataforma_96x96.png", width = 96, height = 96 )
+
+}
 
 object constants {
   const gameScale = 1.5

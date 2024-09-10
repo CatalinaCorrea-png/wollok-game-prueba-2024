@@ -12,11 +12,21 @@ program PepitaGame {
   game.boardGround("fondo2.jpg")
 	game.showAttributes(player) //Debug
 
-  // AGREGO PLATAFORMA
-  platGrande.posicionar(100, 0)
-  game.addVisual(platGrande)
-  const platHitbox = new Hitbox(width = 96, height = 96)
-  platHitbox.initHitbox(platGrande)
+  // AGREGO PLATAFORMAS
+  
+  mapaPosiciones.forEach { p => 
+    const plat = new Plataforma(imagen = "plataforma_96x32.png", width = 96, height = 96)
+    mapa.addPlataforma(plat) 
+    mapa.platHitbox(new Hitbox(width = 96, height = 96))
+    }
+
+  mapa.plataformas().forEach { p => 
+    p.posicionar(mapaPosiciones.get(0.randomUpTo(3)), 0) 
+    game.addVisual(p) 
+    }
+  // mapa.platHitbox().forEach { h => 
+  //   h.initHitbox(mapa.plataformas.get(0.randomUpTo(3)))
+  //   }
 
   // AGREGO JUGADOR
   game.addVisual(player)
@@ -24,9 +34,9 @@ program PepitaGame {
   const playerHitbox = new Hitbox(width = 40, height = 28)
   playerHitbox.initHitbox(player)
 
-  game.say(player, platGrande.xPos().toString())
+  game.say(player, mapa.plataformas().get(0).xPos().toString())
   keyboard.d().onPressDo { game.say(player, playerHitbox.xPos().toString()) }
-  keyboard.w().onPressDo { game.say(platGrande, platGrande.xPos().toString()) }
+  keyboard.w().onPressDo { game.say(mapa.plataformas().get(0), mapa.plataformas.get(0).xPos().toString()) }
 
 
 
